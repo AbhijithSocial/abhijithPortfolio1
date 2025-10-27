@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abhijith A K - Social Media Manager Portfolio</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter Font -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Dark background */
+            color: #e6e6e6; /* Light text */
+            transition: background-color 0.5s ease;
+        }
+
+        /* Custom Styles for Modern Look and Feel */
+        .container-padding {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        @media (min-width: 640px) {
+            .container-padding {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+        }
+        
+        /* Custom Animation: Fade-in on scroll/load */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Button Hover Effect */
+        .primary-btn {
+            background-color: #06b6d4; /* Cyan 500 */
+            color: #0d1117;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(6, 182, 212, 0.4);
+        }
+        .primary-btn:hover {
+            background-color: #0891b2; /* Cyan 600 */
+            box-shadow: 0 8px 12px rgba(6, 182, 212, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Portfolio Card Interaction */
+        .portfolio-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #1f2937;
+        }
+        .portfolio-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.2);
+            border-color: #06b6d4;
+        }
+
+        /* Metrics Bar Animation */
+        .metric-bar {
+            height: 8px;
+            background-color: #1f2937;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+        .metric-fill {
+            transition: width 1.5s ease-out;
+            height: 100%;
+            background-color: #06b6d4;
+        }
+
+    </style>
+</head>
+<body class="antialiased min-h-screen">
+
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-50 bg-[#0d1117] bg-opacity-95 backdrop-blur-sm shadow-lg border-b border-gray-800">
+        <div class="max-w-7xl mx-auto flex justify-between items-center py-4 container-padding">
+            <h1 class="text-2xl font-extrabold text-[#06b6d4] tracking-wider">ABHIJITH A K</h1>
+            <nav class="hidden md:flex space-x-6 text-sm font-medium">
+                <a href="#about" class="hover:text-[#06b6d4] transition duration-300">About</a>
+                <a href="#services" class="hover:text-[#06b6d4] transition duration-300">Expertise</a>
+                <a href="#portfolio" class="hover:text-[#06b6d4] transition duration-300">Portfolio</a>
+                <a href="#results" class="hover:text-[#06b6d4] transition duration-300">Results</a>
+                <a href="#contact" class="hover:text-[#06b6d4] transition duration-300">Contact</a>
+            </nav>
+            <a href="#contact" class="md:hidden primary-btn px-3 py-1 text-xs rounded-full font-semibold">Connect</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto container-padding py-16">
+
+        <!-- 1. Hero Section -->
+        <section id="hero" class="py-20 lg:py-32 fade-in">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="space-y-6">
+                    <span class="text-sm font-semibold uppercase tracking-widest text-[#06b6d4]">Results-Driven Marketing</span>
+                    <h2 class="text-5xl md:text-7xl font-extrabold leading-tight">
+                        I Turn Social Media Into A <span class="text-[#06b6d4]">Growth Engine.</span>
+                    </h2>
+                    <p id="about" class="text-lg text-gray-400 max-w-xl">
+                        Results-driven Social Media Manager with over 3 years of hands-on experience in content strategy, digital branding, paid advertising, and community engagement. Proven ability to grow online presence, drive lead generation, and improve customer retention through data-driven social campaigns.
+                    </p>
+                    <div class="flex space-x-4 pt-4">
+                        <a href="#portfolio" class="primary-btn px-6 py-3 rounded-full font-bold text-sm tracking-wide">
+                            View Case Studies
+                        </a>
+                        <a href="mailto:imabhijitha@gmail.com" class="px-6 py-3 rounded-full font-bold text-sm tracking-wide border border-gray-700 hover:border-[#06b6d4] hover:text-[#06b6d4] transition duration-300">
+                            Get In Touch
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden lg:flex justify-center">
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Services/Expertise Section -->
+        <section id="services" class="py-20 fade-in">
+            <h3 class="text-4xl font-bold mb-10 text-center">My Core Expertise</h3>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Skill Card 1: Content Strategy -->
+                <div class="p-6 bg-gray-800 rounded-xl shadow-lg hover:shadow-cyan-500/20 transition duration-300">
+                    <svg class="w-8 h-8 text-[#06b6d4] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1v-3m0 0a2 2 0 002-2V5a2 2 0 00-2-2H9a2 2 0 00-2 2v10a2 2 0 002 2m-.75 0h8.5"></path></svg>
+                    <h4 class="text-xl font-semibold mb-2">Content Strategy & Creation</h4>
+                    <p class="text-gray-400 text-sm">Developing, creating, and scheduling high-volume daily posts including Reels, posters, and Stories across all major platforms.</p>
+                </div>
+                <!-- Skill Card 2: Paid Advertising -->
+                <div class="p-6 bg-gray-800 rounded-xl shadow-lg hover:shadow-cyan-500/20 transition duration-300">
+                    <svg class="w-8 h-8 text-[#06b6d4] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-2.008 0-4.048.43-5.74 1.258C4.5 10.15 3 11.758 3 14h18c0-2.242-1.5-3.85-3.26-4.742C16.048 8.43 14.008 8 12 8z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17v4m0 0h-4m4 0h4"></path></svg>
+                    <h4 class="text-xl font-semibold mb-2">Ad Optimization & ROI</h4>
+                    <p class="text-gray-400 text-sm">Executing targeted social media and Google Ad campaigns. Expertise in A/B testing, audience segmentation, and budget optimization for maximum ROI.</p>
+                </div>
+                <!-- Skill Card 3: Community Management -->
+                <div class="p-6 bg-gray-800 rounded-xl shadow-lg hover:shadow-cyan-500/20 transition duration-300">
+                    <svg class="w-8 h-8 text-[#06b6d4] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2m-4-0H9m-4 0H3m4-8a4 4 0 11-8 0 4 4 0 018 0zM12 14c-2.242 0-3.85-1.5-4.742-3.26C6.43 9.048 6 7.008 6 5c0-2.242 1.5-3.85 3.26-4.742C10.15 0.43 12 0 12 0s1.85 0.43 3.26 1.258C16.5 2.15 18 3.758 18 6c0 2.242-1.5 3.85-3.26 4.742C14.008 11.57 12 12 12 12z"></path></svg>
+                    <h4 class="text-xl font-semibold mb-2">Engagement & Loyalty</h4>
+                    <p class="text-gray-400 text-sm">Actively engaging with online communities, responding to messages and comments to foster a positive brand image and customer retention.</p>
+                </div>
+                <!-- Skill Card 4: Platform Management -->
+                <div class="p-6 bg-gray-800 rounded-xl shadow-lg hover:shadow-cyan-500/20 transition duration-300">
+                    <svg class="w-8 h-8 text-[#06b6d4] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm12 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm12 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <h4 class="text-xl font-semibold mb-2">Multi-Platform Mastery</h4>
+                    <p class="text-gray-400 text-sm">Managing and growing presence across Facebook, Instagram, LinkedIn, YouTube, and Twitter, ensuring consistent branding across all channels.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Portfolio/Case Studies Section -->
+        <section id="portfolio" class="py-20 fade-in">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl font-bold mb-4">Featured Work & Designs</h3>
+                <p class="text-gray-400 text-lg">A look into strategic content creation and campaign visuals.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Portfolio Item 1: Sanjose Consultancy - RN Campaign -->
+                <div class="portfolio-card bg-gray-800 rounded-xl overflow-hidden shadow-xl">
+                    <div class="relative h-64 bg-gray-700 flex items-center justify-center">
+                        <!-- Placeholder for "friday main.jpg" -->
+                        <img src="assets/sanjose.jpg" alt="Registered Nurse Campaign Graphic" class="w-full h-full object-cover opacity-70">
+                        <span class="absolute top-3 right-3 text-xs font-semibold bg-[#06b6d4] text-black px-3 py-1 rounded-full">Lead Gen</span>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-2xl font-bold mb-2">Sanjose Consultancy - RN Registration</h4>
+                        <p class="text-gray-400 text-sm mb-4">As a Social Media Manager at Sanjose Consultancy, I was responsible for developing and executing social media strategies that strengthened the company’s online presence and engagement. I created and designed posts, reels, and stories that reflected the brand’s identity while ensuring a consistent tone and visual style across all platforms. I also managed paid advertising campaigns, analyzed their performance, and optimized results to reach the right audience effectively. Engaging with followers and responding to messages helped me build a strong online community and increase customer trust. I closely collaborated with the management team to align digital campaigns with the company’s goals and promotions. By regularly tracking performance insights and staying updated with the latest social media trends and algorithms, I was able to continuously improve content strategies and ensure steady growth across all platforms.</p>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <span class="bg-gray-700 px-3 py-1 rounded-full">Facebook Ads</span>
+                            <span class="bg-gray-700 px-3 py-1 rounded-full">Graphic Design</span>
+                            <span class="bg-gray-700 px-3 py-1 rounded-full">A/B Testing</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Item 2: F2.0 Studios - Instagram Strategy -->
+                <div class="portfolio-card bg-gray-800 rounded-xl overflow-hidden shadow-xl">
+                    <div class="relative h-64 bg-gray-700 flex items-center justify-center">
+                        <!-- Placeholder for F2.0 Studios Content -->
+                        <img src="assets/f2.jpg" alt="F21.764zm13 Studio" class="w-full h-full object-cover opacity-70">
+                        <span class="absolute top-3 right-3 text-xs font-semibold bg-[#06b6d4] text-black px-3 py-1 rounded-full">Organic Growth</span>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-2xl font-bold mb-2">F2.0 Studios</h4>
+                        <p class="text-gray-400 text-sm mb-4">At F2.0 Studios, I worked as a Social Media Manager, where I was responsible for developing and executing creative digital strategies to enhance the brand’s online presence and engagement. My role involved managing content creation, planning social media campaigns, and collaborating with the design and production teams to ensure consistent visual branding. I handled the studio’s official pages across multiple platforms, analyzed performance metrics, and optimized campaigns for better reach and audience interaction. Additionally, I managed client communications, maintained posting schedules, and used analytics insights to improve content effectiveness and brand growth..</p>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <span class="bg-gray-700 px-3 py-1 rounded-full">Instagram</span>
+                            <span class="bg-gray-700 px-3 py-1 rounded-full">Reel Creation</span>
+                            <span class="bg-gray-700 px-3 py-1 rounded-full">Community Mgt</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Item 3: Festival/Moment Content -->
+                <div class="portfolio-card bg-gray-800 rounded-xl overflow-hidden shadow-xl">
+                    <div class="relative h-64 bg-gray-700 flex items-center justify-center">
+                        <!-- Placeholder for "holi@3x.jpg" and "womens day@3x.jpg" -->
+                        <img src="assets/sen.jpg" alt="Holi and Womens Day Graphics" class="w-full h-full object-cover opacity-70">
+                        <span class="absolute top-3 right-3 text-xs font-semibold bg-[#06b6d4] text-black px-3 py-1 rounded-full">Engagement</span>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-2xl font-bold mb-2">Seasonal & Holiday Content</h4>
+                        <p class="text-gray-400 text-sm mb-4">As a Social Media Manager at Sensation Solutions, I was responsible for managing the digital presence of over 8 clients across different industries. My work focused on creating and executing tailored social media strategies that reflected each brand’s unique identity and goals. I planned and designed engaging posts, reels, and campaigns for platforms like LinkedIn, Instagram, and Facebook to build strong audience connections and drive consistent growth. I also monitored campaign performance, analyzed insights, and optimized strategies to ensure the best results for every client. Working closely with the content, design, and marketing teams, I maintained a consistent brand voice while bringing creativity and innovation to every project. Managing multiple clients helped me strengthen my multitasking, communication, and analytical skills, ensuring each brand stood out in the digital space..</p>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <span class="bg-gray-700 px-3 py-1 rounded-full">Canva/Photoshop</span>
+                            <span class="bg-gray-700 px-3 py-1 rounded-full">Brand Awareness</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Analytics/Results Simulation Section -->
+        <section id="results" class="py-20 fade-in">
+            <div class="text-center mb-12">
+                <h3 class="text-4xl font-bold mb-4">Driving Measurable Results</h3>
+                <p class="text-gray-400 text-lg">My strategy is rooted in data and optimization for sustained growth.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                <!-- Metric 1 -->
+                <div class="p-8 bg-gray-800 rounded-xl shadow-xl">
+                    <p class="text-5xl font-extrabold text-[#06b6d4] mb-2" data-target="68">0%</p>
+                    <p class="text-lg font-semibold text-gray-200">Avg. Follower Growth (Annual)</p>
+                    <div class="metric-bar mt-4"><div class="metric-fill" data-width="85%" style="width: 0%;"></div></div>
+                </div>
+                <!-- Metric 2 -->
+                <div class="p-8 bg-gray-800 rounded-xl shadow-xl">
+                    <p class="text-5xl font-extrabold text-[#06b6d4] mb-2" data-target="56">0%</p>
+                    <p class="text-lg font-semibold text-gray-200">Increased Client Leads via SM</p>
+                    <div class="metric-bar mt-4"><div class="metric-fill" data-width="95%" style="width: 0%;"></div></div>
+                </div>
+                <!-- Metric 3 -->
+                <div class="p-8 bg-gray-800 rounded-xl shadow-xl">
+                    <p class="text-5xl font-extrabold text-[#06b6d4] mb-2" data-target="49">0%</p>
+                    <p class="text-lg font-semibold text-gray-200">Avg. Cost-Per-Acquisition Reduction</p>
+                    <div class="metric-bar mt-4"><div class="metric-fill" data-width="75%" style="width: 0%;"></div></div>
+                </div>
+            </div>
+            <div class="mt-12 p-6 bg-[#0d1117] border border-gray-700 rounded-xl text-center">
+                <p class="text-gray-400 italic">"Optimized ad spend through rigorous A/B testing, precise audience targeting, and strategic budget allocation."</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer & Contact -->
+    <footer id="contact" class="bg-gray-900 mt-12 py-12 border-t border-gray-800 fade-in">
+        <div class="max-w-7xl mx-auto container-padding flex flex-col md:flex-row justify-between items-center">
+            <div class="text-center md:text-left mb-6 md:mb-0">
+                <h4 class="text-2xl font-bold text-white">Let's Build Your Online Presence.</h4>
+                <p class="text-gray-400">Ready to leverage data-driven social campaigns?</p>
+            </div>
+            <div class="space-y-4 md:space-y-0 md:space-x-8 text-center md:text-right">
+                <p class="text-lg">
+                    <span class="font-semibold text-[#06b6d4]">Email:</span> 
+                    <a href="mailto:imabhijitha@gmail.com" class="hover:text-[#06b6d4] transition duration-300">imabhijitha@gmail.com</a>
+                </p>
+                <p class="text-lg">
+                    <span class="font-semibold text-[#06b6d4]">Phone:</span> 
+                    <a href="tel:+918138098188" class="hover:text-[#06b6d4] transition duration-300">+91 81380 98188</a>
+                </p>
+                <a href="https://www.linkedin.com/in/abhijith-asokan-4165481a7/" target="_blank" class="text-gray-400 hover:text-[#06b6d4] transition duration-300 inline-block mt-2">
+                    <!-- LinkedIn Icon (Simple SVG) -->
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.366-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                </a>
+            </div>
+        </div>
+        <div class="mt-8 text-center text-sm text-gray-500">
+            &copy; 2025 Abhijith A K. Portfolio built with data from your Google Drive.
+        </div>
+    </footer>
+
+    <!-- JavaScript for Interactions and Animations -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Setup Intersection Observer for Fade-In Animation
+            const sections = document.querySelectorAll('.fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target); // Stop observing once visible
+                    }
+                });
+            }, {
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            });
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+
+            // 2. Metric Bar and Counter Animation
+            const animateMetrics = () => {
+                const metricElements = document.querySelectorAll('#results .metric-fill');
+                metricElements.forEach(bar => {
+                    const width = bar.getAttribute('data-width');
+                    bar.style.width = width;
+                });
+
+                const counterElements = document.querySelectorAll('#results [data-target]');
+                counterElements.forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    let current = 0;
+                    const increment = target / 100; // Step size
+
+                    const updateCounter = () => {
+                        if (current < target) {
+                            current += increment;
+                            // Ensure the counter doesn't overshoot the target
+                            counter.textContent = Math.min(Math.ceil(current), target) + '%';
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            counter.textContent = target + '%';
+                        }
+                    };
+                    updateCounter();
+                });
+            };
+
+            // Observe the Results section to trigger the animations
+            const resultsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateMetrics();
+                        resultsObserver.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 }); // Trigger when half of the results section is visible
+
+            const resultsSection = document.getElementById('results');
+            if (resultsSection) {
+                resultsObserver.observe(resultsSection);
+            }
+        });
+    </script>
+
+</body>
+</html>
