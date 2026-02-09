@@ -3,344 +3,1054 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abhijith A K - Social Media Manager Portfolio</title>
-    <!-- Load Tailwind CSS -->
+    <title>Abhijith A K | Digital Marketer</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Use Inter Font -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0d1117; /* Dark background */
-            color: #e6e6e6; /* Light text */
-            transition: background-color 0.5s ease;
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+        :root {
+            --ease-premium: cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        /* Custom Styles for Modern Look and Feel */
-        .container-padding {
-            padding-left: 1rem;
-            padding-right: 1rem;
-        }
-        @media (min-width: 640px) {
-            .container-padding {
-                padding-left: 2rem;
-                padding-right: 2rem;
-            }
-        }
-        
-        /* Custom Animation: Fade-in on scroll/load */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 1s ease-out, transform 1s ease-out;
-        }
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Button Hover Effect */
-        .primary-btn {
-            background-color: #06b6d4; /* Cyan 500 */
-            color: #0d1117;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(6, 182, 212, 0.4);
-        }
-        .primary-btn:hover {
-            background-color: #0891b2; /* Cyan 600 */
-            box-shadow: 0 8px 12px rgba(6, 182, 212, 0.6);
-            transform: translateY(-2px);
-        }
-
-        /* Portfolio Card Interaction */
-        .portfolio-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: 1px solid #1f2937;
-        }
-        .portfolio-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.2);
-            border-color: #06b6d4;
-        }
-
-        /* Metrics Bar Animation */
-        .metric-bar {
-            height: 8px;
-            background-color: #1f2937;
-            border-radius: 9999px;
-            overflow: hidden;
-        }
-        .metric-fill {
-            transition: width 1.5s ease-out;
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
             height: 100%;
-            background-color: #06b6d4;
+            overflow: hidden;
+            font-family: 'Outfit', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
         }
 
+        /* --- BACKGROUND CANVAS --- */
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+
+        /* --- LOADER --- */
+        @keyframes loadingBar { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }
+        .animate-loading-bar { animation: loadingBar 2s ease-in-out infinite; }
+
+        #content-wrapper { position: relative; z-index: 10; width: 100%; height: 100%; }
+
+        .page-section {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            overflow-y: auto; overflow-x: hidden;
+            padding-top: 80px; padding-bottom: 40px;
+            opacity: 0; visibility: hidden;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            transform: scale(0.98) translateY(10px);
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+
+        .page-section.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); z-index: 20; }
+        .page-section::-webkit-scrollbar { width: 6px; }
+        .page-section::-webkit-scrollbar-track { background: transparent; }
+        .page-section::-webkit-scrollbar-thumb { background-color: rgba(255, 255, 255, 0.1); border-radius: 20px; }
+
+        /* --- NAVIGATION --- */
+        .nav-container {
+            position: relative; display: flex; align-items: center;
+            background: rgba(255, 255, 255, 0.03); padding: 5px;
+            border-radius: 9999px; border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+        }
+        .nav-link { 
+            position: relative; cursor: pointer; transition: color 0.5s var(--ease-premium);
+            padding: 8px 16px; z-index: 10; font-size: 0.85rem;
+            color: #9ca3af; font-weight: 500; white-space: nowrap;
+        }
+        .nav-link.active-nav { color: #ffffff; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        
+        #nav-pill {
+            position: absolute; left: 5px; top: 5px; height: calc(100% - 10px);
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); 
+            border-radius: 9999px; z-index: 1;
+            transition: left 0.6s var(--ease-premium), width 0.6s var(--ease-premium);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        /* --- GLASS & UTILS --- */
+        .glass {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.5s var(--ease-premium);
+        }
+        #work .glass, #work .glass:hover { border: none !important; }
+        .glass:hover {
+            border-color: rgba(255,255,255,0.15); background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-5px); box-shadow: 0 15px 40px 0 rgba(0, 0, 0, 0.5);
+        }
+        .glass-heavy {
+            background: rgba(5, 5, 5, 0.85); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .tool-icon {
+            width: 24px; height: 24px; object-fit: contain;
+            border-radius: 4px; background: rgba(255,255,255,0.1); padding: 2px;
+        }
+
+        /* --- ANIMATIONS --- */
+        .reveal-item { transition: all 1s var(--ease-premium); }
+        .pending-reveal { opacity: 0; transform: translateY(40px); filter: blur(10px); }
+        
+        .hero-title { display: inline-block; }
+        .hero-title.animate-hero { animation: heroExpand 1.5s var(--ease-premium) forwards; }
+        @keyframes heroExpand {
+            0% { opacity: 0; transform: scale(0.9); filter: blur(20px); }
+            100% { opacity: 1; transform: scale(1); filter: blur(0); }
+        }
+
+        .gradient-text-anim { background-size: 200% auto; animation: gradientMove 1.5s ease infinite; }
+        @keyframes gradientMove { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+
+        /* --- MODAL --- */
+        .modal-enter { animation: modalFadeIn 0.3s ease forwards; }
+        .modal-content-enter { animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes modalFadeIn { from { opacity: 0; backdrop-filter: blur(0px); } to { opacity: 1; backdrop-filter: blur(16px); } }
+        @keyframes modalPop { 0% { opacity: 0; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1); } }
+
+        /* --- TESTIMONIALS --- */
+        .testimonial-slide {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; transform: translateX(20px); pointer-events: none;
+        }
+        .testimonial-slide.active-slide { opacity: 1; transform: translateX(0); pointer-events: auto; position: relative; }
     </style>
 </head>
-<body class="antialiased min-h-screen">
+<body>
 
-    <!-- Header & Navigation -->
-    <header class="sticky top-0 z-50 bg-[#0d1117] bg-opacity-95 backdrop-blur-sm shadow-lg border-b border-gray-800">
-        <div class="max-w-7xl mx-auto flex justify-between items-center py-4 container-padding">
-            <h1 class="text-2xl font-extrabold text-[#06b6d4] tracking-wider">ABHIJITH A K</h1>
-            <nav class="hidden md:flex space-x-6 text-sm font-medium">
-                <a href="#about" class="hover:text-[#06b6d4] transition duration-300">About</a>
-                <a href="#services" class="hover:text-[#06b6d4] transition duration-300">Expertise</a>
-                <a href="#portfolio" class="hover:text-[#06b6d4] transition duration-300">Portfolio</a>
-                <a href="#results" class="hover:text-[#06b6d4] transition duration-300">Results</a>
-                <a href="#contact" class="hover:text-[#06b6d4] transition duration-300">Contact</a>
-            </nav>
-            <a href="#contact" class="md:hidden primary-btn px-3 py-1 text-xs rounded-full font-semibold">Connect</a>
+    <!-- PAGE LOADER -->
+    <div id="page-loader" class="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center transition-opacity duration-700 ease-out">
+        <h1 class="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-violet-400 to-blue-600 gradient-text-anim tracking-wider mb-6">
+            ABHIJITH A K
+        </h1>
+        <div class="w-48 h-1 bg-gray-800 rounded-full overflow-hidden">
+            <div class="h-full bg-blue-600 animate-loading-bar"></div>
         </div>
-    </header>
+    </div>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto container-padding py-16">
+    <!-- 3D BACKGROUND -->
+    <div id="canvas-container"></div>
 
-        <!-- 1. Hero Section -->
-        <section id="hero" class="py-20 lg:py-32 fade-in">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6">
-                    <span class="text-sm font-semibold uppercase tracking-widest text-[#06b6d4]">Results-Driven Marketing</span>
-                    <h2 class="text-5xl md:text-7xl font-extrabold leading-tight">
-                        I Turn Social Media Into A <span class="text-[#06b6d4]">Growth Engine.</span>
-                    </h2>
-                    <p id="about" class="text-lg text-gray-400 max-w-xl">
-                        Results-driven Social Media Manager with over 3 years of hands-on experience in content strategy, digital branding, paid advertising, and community engagement. Proven ability to grow online presence, drive lead generation, and improve customer retention through data-driven social campaigns.
+    <!-- NAV -->
+    <nav class="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center transition-all duration-300">
+        <div class="text-xl font-bold tracking-tighter uppercase cursor-pointer hover:text-blue-500 transition-colors drop-shadow-md" onclick="navigateTo('home')">
+            Abhijith<span class="text-blue-600">.</span>
+        </div>
+        
+        <div class="hidden md:flex nav-container">
+            <div id="nav-pill" style="width: 0; opacity: 0;"></div>
+            <span onclick="navigateTo('home')" class="nav-link active-nav" id="nav-home">Home</span>
+            <span onclick="navigateTo('about')" class="nav-link" id="nav-about">About</span>
+            <span onclick="navigateTo('experience')" class="nav-link" id="nav-experience">Experience</span>
+            <span onclick="navigateTo('work')" class="nav-link" id="nav-work">Portfolio</span>
+            <span onclick="navigateTo('contact')" class="nav-link" id="nav-contact">Contact</span>
+        </div>
+
+        <button class="md:hidden text-white text-xl" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <a href="mailto:imabhijitha@gmail.com" class="hidden md:block px-6 py-2 bg-white text-black text-xs font-bold uppercase tracking-widest rounded-full hover:bg-blue-600 hover:text-white transition-all transform hover:scale-105 shadow-lg shadow-blue-600/20">
+            Hire Me
+        </a>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl transform translate-x-full transition-transform duration-500 md:hidden flex flex-col justify-center items-center gap-8 text-2xl">
+        <button class="absolute top-6 right-6 text-white text-2xl" onclick="toggleMobileMenu()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <span onclick="navigateTo('home'); toggleMobileMenu()" class="hover:text-blue-500 cursor-pointer">Home</span>
+        <span onclick="navigateTo('about'); toggleMobileMenu()" class="hover:text-blue-500 cursor-pointer">About</span>
+        <span onclick="navigateTo('experience'); toggleMobileMenu()" class="hover:text-blue-500 cursor-pointer">Experience</span>
+        <span onclick="navigateTo('work'); toggleMobileMenu()" class="hover:text-blue-500 cursor-pointer">Portfolio</span>
+        <span onclick="navigateTo('contact'); toggleMobileMenu()" class="hover:text-blue-500 cursor-pointer">Contact</span>
+    </div>
+
+    <!-- PORTFOLIO MODAL -->
+    <div id="portfolio-modal" class="fixed inset-0 z-[100] flex items-center justify-center hidden">
+        <div class="modal-bg absolute inset-0 bg-black/90 cursor-pointer" onclick="closeModal()"></div>
+        
+        <button class="absolute left-8 top-1/2 -translate-y-1/2 z-20 text-white/50 hover:text-white hover:scale-110 transition-all p-4 hidden md:block" onclick="changeSlide(-1)">
+            <i class="fa-solid fa-chevron-left text-5xl"></i>
+        </button>
+        <button class="absolute right-8 top-1/2 -translate-y-1/2 z-20 text-white/50 hover:text-white hover:scale-110 transition-all p-4 hidden md:block" onclick="changeSlide(1)">
+            <i class="fa-solid fa-chevron-right text-5xl"></i>
+        </button>
+
+        <div class="modal-box relative z-10 p-2 max-w-lg w-full mx-4" id="modal-container">
+            <button class="absolute -top-12 right-0 text-white text-3xl hover:text-blue-500 transition-colors z-30" onclick="closeModal()">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="modal-content-body" class="bg-black/50 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl p-2 transition-all duration-300 transform">
+                <!-- JS injects content here -->
+            </div>
+            
+            <div class="flex justify-between items-center mt-4 px-4 md:hidden text-white/70">
+                <button onclick="changeSlide(-1)" class="p-4 active:scale-95"><i class="fa-solid fa-chevron-left text-2xl"></i></button>
+                <span class="text-xs tracking-widest opacity-50 font-mono" id="modal-counter"></span>
+                <button onclick="changeSlide(1)" class="p-4 active:scale-95"><i class="fa-solid fa-chevron-right text-2xl"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <main id="content-wrapper">
+
+        <!-- HOME SECTION -->
+        <section id="home" class="page-section active flex flex-col items-center text-center px-4 pt-32 pb-20">
+            <div class="relative z-10 max-w-4xl mx-auto mb-8"> 
+                <p class="text-sm md:text-base text-blue-500 font-bold tracking-[0.4em] uppercase mb-8 reveal-item pending-reveal" style="transition-delay: 0.1s;">Social Media Manager & Marketer</p>
+                
+                <h1 class="hero-title text-5xl md:text-8xl font-black mb-10 leading-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-violet-400 to-blue-600 gradient-text-anim animate-hero whitespace-nowrap pb-2">
+                    ABHIJITH A K
+                </h1>
+                
+                <p class="max-w-xl mx-auto text-gray-300 text-lg md:text-xl leading-relaxed mb-12 font-light drop-shadow-md reveal-item pending-reveal" style="transition-delay: 0.3s;">
+                    Crafting <span class="text-white font-medium">viral stories</span>, managing communities, and driving ROI through data-driven social strategies.
+                </p>
+                <div class="flex flex-col md:flex-row gap-6 justify-center reveal-item pending-reveal" style="transition-delay: 0.5s;">
+                    <button onclick="navigateTo('work')" class="group relative px-8 py-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-full hover:bg-blue-600 hover:text-white transition-all duration-500 font-bold tracking-wider overflow-hidden">
+                        <span class="relative z-10">VIEW MY WORK</span>
+                        <div class="absolute inset-0 bg-blue-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+                    </button>
+                    <button onclick="navigateTo('experience')" class="px-8 py-4 bg-transparent border border-white/30 rounded-full hover:border-blue-600 hover:text-blue-500 hover:bg-blue-600/5 transition-all duration-300 font-bold tracking-wider">
+                        MY JOURNEY
+                    </button>
+                </div>
+            </div>
+
+            <!-- TESTIMONIALS (Integrated) -->
+            <div class="max-w-3xl mx-auto w-full reveal-item pending-reveal mt-4" style="transition-delay: 0.6s;">
+                <div class="relative glass p-6 md:p-8 rounded-[1.5rem] overflow-hidden" id="testimonial-container">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 blur-[50px] rounded-full"></div>
+                    <div class="absolute bottom-0 left-0 w-32 h-32 bg-purple-600/10 blur-[50px] rounded-full"></div>
+
+                    <div id="testimonial-track" class="relative min-h-[160px] px-4 md:px-12">
+                        <!-- Slide 1 -->
+                        <div class="testimonial-slide active-slide flex flex-col items-center text-center">
+                            <i class="fa-solid fa-quote-left text-2xl text-blue-500 mb-3 opacity-50"></i>
+                            <p class="text-base md:text-lg font-light leading-relaxed mb-4 italic">"Abhijith's social strategies completely transformed our online presence. Our engagement sky-rocketed within weeks!"</p>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Tony</h4>
+                                <p class="text-[10px] text-blue-400 uppercase tracking-widest">Sanjose Consultancy</p>
+                            </div>
+                        </div>
+                        <!-- Slide 2 -->
+                        <div class="testimonial-slide flex flex-col items-center text-center">
+                            <i class="fa-solid fa-quote-left text-2xl text-purple-500 mb-3 opacity-50"></i>
+                            <p class="text-base md:text-lg font-light leading-relaxed mb-4 italic">"The leads generated from his targeted ad campaigns were high quality. He truly understands audience behavior."</p>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Amal</h4>
+                                <p class="text-[10px] text-purple-400 uppercase tracking-widest">F2.0 Studios</p>
+                            </div>
+                        </div>
+                        <!-- Slide 3 -->
+                        <div class="testimonial-slide flex flex-col items-center text-center">
+                            <i class="fa-solid fa-quote-left text-2xl text-cyan-500 mb-3 opacity-50"></i>
+                            <p class="text-base md:text-lg font-light leading-relaxed mb-4 italic">"Managed multiple clients seamlessly with a level of professionalism that is rare to find. Highly recommended."</p>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Niya</h4>
+                                <p class="text-[10px] text-cyan-400 uppercase tracking-widest">Sensations Solutions</p>
+                            </div>
+                        </div>
+                        <!-- Slide 4 -->
+                        <div class="testimonial-slide flex flex-col items-center text-center">
+                            <i class="fa-solid fa-quote-left text-2xl text-pink-500 mb-3 opacity-50"></i>
+                            <p class="text-base md:text-lg font-light leading-relaxed mb-4 italic">"His trend auditing and content planning streamlined our workflow perfectly. A vital asset for our UAE campaigns."</p>
+                            <div>
+                                <h4 class="text-sm font-bold text-white">Akshay</h4>
+                                <p class="text-[10px] text-pink-400 uppercase tracking-widest">Stories by Akshay</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dots -->
+                    <div class="flex justify-center gap-2 mt-4 z-10 relative">
+                        <div class="w-1.5 h-1.5 rounded-full bg-white transition-all duration-300 testimonial-dot active-dot"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-300 testimonial-dot"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-300 testimonial-dot"></div>
+                        <div class="w-1.5 h-1.5 rounded-full bg-white/20 transition-all duration-300 testimonial-dot"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT SECTION -->
+        <section id="about" class="page-section px-6 md:px-20 flex items-center">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center w-full">
+                <div class="glass p-10 md:p-14 rounded-[2.5rem] order-2 md:order-1 relative overflow-hidden reveal-item pending-reveal" style="transition-delay: 0.1s;">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 blur-[80px] rounded-full"></div>
+                    <div class="absolute bottom-0 left-0 w-64 h-64 bg-blue-900/10 blur-[80px] rounded-full"></div>
+                    
+                    <h2 class="text-3xl md:text-5xl font-bold mb-8 relative z-10">About Me</h2>
+                    <p class="text-gray-300 leading-relaxed mb-8 relative z-10 text-lg">
+                        I am a results-driven Social Media Manager with over 3 years of hands-on experience in content strategy, digital branding, and paid advertising. 
                     </p>
-                    <div class="flex space-x-4 pt-4">
-                        <a href="#portfolio" class="primary-btn px-6 py-3 rounded-full font-bold text-sm tracking-wide">
-                            View Case Studies
-                        </a>
-                        <a href="mailto:imabhijitha@gmail.com" class="px-6 py-3 rounded-full font-bold text-sm tracking-wide border border-gray-700 hover:border-[#06b6d4] hover:text-[#06b6d4] transition duration-300">
-                            Get In Touch
-                        </a>
+                    
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 gap-8 relative z-10 mb-10">
+                        <div class="border-l-2 border-blue-600 pl-6 hover:pl-8 transition-all duration-300">
+                            <span class="block text-5xl font-bold mb-1 gradient-text-anim text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-blue-700">3+</span>
+                            <span class="text-xs text-gray-400 uppercase tracking-widest font-bold">Years Experience</span>
+                        </div>
+                        <div class="border-l-2 border-cyan-500 pl-6 hover:pl-8 transition-all duration-300">
+                            <span class="block text-5xl font-bold mb-1 gradient-text-anim text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-teal-400">15+</span>
+                            <span class="text-xs text-gray-400 uppercase tracking-widest font-bold">Clients Managed</span>
+                        </div>
                     </div>
-                </div>
-                <div class="hidden lg:flex justify-center">
 
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. Services/Expertise Section -->
-        <section id="services" class="py-20 fade-in">
-            <h3 class="text-4xl font-bold mb-10 text-center">My Core Expertise</h3>
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- Skill Card 1: Content Strategy -->
-                <div class="p-6 bg-gray-800 rounded-xl shadow-lg hover:shadow-cyan-500/20 transition duration-300">
-                    <svg class="w-8 h-8 text-[#06b6d4] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1v-3m0 0a2 2 0 002-2V5a2 2 0 00-2-2H9a2 2 0 00-2 2v10a2 2 0 002 2m-.75 0h8.5"></path></svg>
-                    <h4 class="text-xl font-semibold mb-2">Content Strategy & Creation</h4>
-                    <p class="text-gray-400 text-sm">Developing, creating, and scheduling high-volume daily posts including Reels, posters, and Stories across all major platforms.</p>
-                </div>
-                <!-- Skill Card 2: Paid Advertising -->
-                <div class="p-6 bg-gray-800 rounded-xl shadow-lg hover:shadow-cyan-500/20 transition duration-300">
-                    <svg class="w-8 h-8 text-[#06b6d4] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-2.008 0-4.048.43-5.74 1.258C4.5 10.15 3 11.758 3 14h18c0-2.242-1.5-3.85-3.26-4.742C16.048 8.43 14.008 8 12 8z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17v4m0 0h-4m4 0h4"></path></svg>
-                    <h4 class="text-xl font-semibold mb-2">Ad Optimization & ROI</h4>
-                    <p class="text-gray-400 text-sm">Executing targeted social media and Google Ad campaigns. Expertise in A/B testing, audience segmentation, and budget optimization for maximum ROI.</p>
-                </div>
-                <!-- Skill Card 3: Community Management -->
-                <div class="p-6 bg-gray-800 rounded-xl shadow-lg hover:shadow-cyan-500/20 transition duration-300">
-                    <svg class="w-8 h-8 text-[#06b6d4] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2m-4-0H9m-4 0H3m4-8a4 4 0 11-8 0 4 4 0 018 0zM12 14c-2.242 0-3.85-1.5-4.742-3.26C6.43 9.048 6 7.008 6 5c0-2.242 1.5-3.85 3.26-4.742C10.15 0.43 12 0 12 0s1.85 0.43 3.26 1.258C16.5 2.15 18 3.758 18 6c0 2.242-1.5 3.85-3.26 4.742C14.008 11.57 12 12 12 12z"></path></svg>
-                    <h4 class="text-xl font-semibold mb-2">Engagement & Loyalty</h4>
-                    <p class="text-gray-400 text-sm">Actively engaging with online communities, responding to messages and comments to foster a positive brand image and customer retention.</p>
-                </div>
-                <!-- Skill Card 4: Platform Management -->
-                <div class="p-6 bg-gray-800 rounded-xl shadow-lg hover:shadow-cyan-500/20 transition duration-300">
-                    <svg class="w-8 h-8 text-[#06b6d4] mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm12 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm12 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
-                    <h4 class="text-xl font-semibold mb-2">Multi-Platform Mastery</h4>
-                    <p class="text-gray-400 text-sm">Managing and growing presence across Facebook, Instagram, LinkedIn, YouTube, and Twitter, ensuring consistent branding across all channels.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 3. Portfolio/Case Studies Section -->
-        <section id="portfolio" class="py-20 fade-in">
-            <div class="text-center mb-12">
-                <h3 class="text-4xl font-bold mb-4">Featured Work & Designs</h3>
-                <p class="text-gray-400 text-lg">A look into strategic content creation and campaign visuals.</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Portfolio Item 1: Sanjose Consultancy - RN Campaign -->
-                <div class="portfolio-card bg-gray-800 rounded-xl overflow-hidden shadow-xl">
-                    <div class="relative h-64 bg-gray-700 flex items-center justify-center">
-                        <!-- Placeholder for "friday main.jpg" -->
-                        <img src="assets/sanjose.jpg" alt="Registered Nurse Campaign Graphic" class="w-full h-full object-cover opacity-70">
-                        <span class="absolute top-3 right-3 text-xs font-semibold bg-[#06b6d4] text-black px-3 py-1 rounded-full">Lead Gen</span>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="text-2xl font-bold mb-2">Sanjose Consultancy - RN Registration</h4>
-                        <p class="text-gray-400 text-sm mb-4">As a Social Media Manager at Sanjose Consultancy, I was responsible for developing and executing social media strategies that strengthened the company’s online presence and engagement. I created and designed posts, reels, and stories that reflected the brand’s identity while ensuring a consistent tone and visual style across all platforms. I also managed paid advertising campaigns, analyzed their performance, and optimized results to reach the right audience effectively. Engaging with followers and responding to messages helped me build a strong online community and increase customer trust. I closely collaborated with the management team to align digital campaigns with the company’s goals and promotions. By regularly tracking performance insights and staying updated with the latest social media trends and algorithms, I was able to continuously improve content strategies and ensure steady growth across all platforms.</p>
-                        <div class="flex flex-wrap gap-2 text-xs">
-                            <span class="bg-gray-700 px-3 py-1 rounded-full">Facebook Ads</span>
-                            <span class="bg-gray-700 px-3 py-1 rounded-full">Graphic Design</span>
-                            <span class="bg-gray-700 px-3 py-1 rounded-full">A/B Testing</span>
+                    <!-- Education -->
+                    <div class="border-t border-white/10 pt-8 relative z-10">
+                        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                            <i class="fa-solid fa-graduation-cap text-blue-500"></i> Education
+                        </h3>
+                        <div class="space-y-6">
+                            <div class="group">
+                                <h4 class="text-white font-bold group-hover:text-blue-400 transition-colors">Digital Marketing Certification</h4>
+                                <p class="text-sm text-gray-400">Tecswan Institute Kochi & Avodha <span class="text-blue-600 px-2">•</span> 2022</p>
+                            </div>
+                            <div class="group">
+                                <h4 class="text-white font-bold group-hover:text-blue-400 transition-colors">Bachelor of Commerce</h4>
+                                <p class="text-sm text-gray-400">D.B. College, Keezhoor <span class="text-blue-600 px-2">•</span> 2017 – 2020</p>
+                            </div>
+                            <div class="group">
+                                <h4 class="text-white font-bold group-hover:text-blue-400 transition-colors">Plus Two Commerce</h4>
+                                <p class="text-sm text-gray-400">SMSNVHSS, Vaikom <span class="text-blue-600 px-2">•</span> 2015 – 2017</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Portfolio Item 2: F2.0 Studios - Instagram Strategy -->
-                <div class="portfolio-card bg-gray-800 rounded-xl overflow-hidden shadow-xl">
-                    <div class="relative h-64 bg-gray-700 flex items-center justify-center">
-                        <!-- Placeholder for F2.0 Studios Content -->
-                        <img src="assets/f2.jpg" alt="F21.764zm13 Studio" class="w-full h-full object-cover opacity-70">
-                        <span class="absolute top-3 right-3 text-xs font-semibold bg-[#06b6d4] text-black px-3 py-1 rounded-full">Organic Growth</span>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="text-2xl font-bold mb-2">F2.0 Studios</h4>
-                        <p class="text-gray-400 text-sm mb-4">At F2.0 Studios, I worked as a Social Media Manager, where I was responsible for developing and executing creative digital strategies to enhance the brand’s online presence and engagement. My role involved managing content creation, planning social media campaigns, and collaborating with the design and production teams to ensure consistent visual branding. I handled the studio’s official pages across multiple platforms, analyzed performance metrics, and optimized campaigns for better reach and audience interaction. Additionally, I managed client communications, maintained posting schedules, and used analytics insights to improve content effectiveness and brand growth..</p>
-                        <div class="flex flex-wrap gap-2 text-xs">
-                            <span class="bg-gray-700 px-3 py-1 rounded-full">Instagram</span>
-                            <span class="bg-gray-700 px-3 py-1 rounded-full">Reel Creation</span>
-                            <span class="bg-gray-700 px-3 py-1 rounded-full">Community Mgt</span>
+                <div class="order-1 md:order-2 flex flex-col gap-10">
+                    <!-- Professional Skills -->
+                    <div>
+                        <h3 class="text-sm font-bold text-blue-500 uppercase tracking-[0.2em] mb-6 reveal-item pending-reveal" style="transition-delay: 0.2s;">Professional Skills</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-blue-600/20 hover:border-blue-600/50 transition-all cursor-default"><span class="text-sm text-gray-200">Social Media Strategy</span></div>
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-blue-600/20 hover:border-blue-600/50 transition-all cursor-default"><span class="text-sm text-gray-200">Content Creation</span></div>
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-blue-600/20 hover:border-blue-600/50 transition-all cursor-default"><span class="text-sm text-gray-200">Community Management</span></div>
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-blue-600/20 hover:border-blue-600/50 transition-all cursor-default"><span class="text-sm text-gray-200">Campaign Management</span></div>
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-blue-600/20 hover:border-blue-600/50 transition-all cursor-default"><span class="text-sm text-gray-200">Audience Targeting</span></div>
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-blue-600/20 hover:border-blue-600/50 transition-all cursor-default"><span class="text-sm text-gray-200">Budget Optimization</span></div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Portfolio Item 3: Festival/Moment Content -->
-                <div class="portfolio-card bg-gray-800 rounded-xl overflow-hidden shadow-xl">
-                    <div class="relative h-64 bg-gray-700 flex items-center justify-center">
-                        <!-- Placeholder for "holi@3x.jpg" and "womens day@3x.jpg" -->
-                        <img src="assets/sen.jpg" alt="Holi and Womens Day Graphics" class="w-full h-full object-cover opacity-70">
-                        <span class="absolute top-3 right-3 text-xs font-semibold bg-[#06b6d4] text-black px-3 py-1 rounded-full">Engagement</span>
-                    </div>
-                    <div class="p-6">
-                        <h4 class="text-2xl font-bold mb-2">Seasonal & Holiday Content</h4>
-                        <p class="text-gray-400 text-sm mb-4">As a Social Media Manager at Sensation Solutions, I was responsible for managing the digital presence of over 8 clients across different industries. My work focused on creating and executing tailored social media strategies that reflected each brand’s unique identity and goals. I planned and designed engaging posts, reels, and campaigns for platforms like LinkedIn, Instagram, and Facebook to build strong audience connections and drive consistent growth. I also monitored campaign performance, analyzed insights, and optimized strategies to ensure the best results for every client. Working closely with the content, design, and marketing teams, I maintained a consistent brand voice while bringing creativity and innovation to every project. Managing multiple clients helped me strengthen my multitasking, communication, and analytical skills, ensuring each brand stood out in the digital space..</p>
-                        <div class="flex flex-wrap gap-2 text-xs">
-                            <span class="bg-gray-700 px-3 py-1 rounded-full">Canva/Photoshop</span>
-                            <span class="bg-gray-700 px-3 py-1 rounded-full">Brand Awareness</span>
+                    <!-- Technical Arsenal -->
+                    <div>
+                        <h3 class="text-sm font-bold text-cyan-400 uppercase tracking-[0.2em] mb-6 reveal-item pending-reveal" style="transition-delay: 0.3s;">Technical Arsenal</h3>
+                        <div class="flex flex-wrap gap-3">
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all cursor-default flex items-center gap-2">
+                                <i class="fa-brands fa-facebook text-blue-500"></i> <span class="text-sm text-gray-200">FB & Insta Ads</span>
+                            </div>
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all cursor-default flex items-center gap-2">
+                                <i class="fa-brands fa-google text-red-500"></i> <span class="text-sm text-gray-200">Google Ads</span>
+                            </div>
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all cursor-default flex items-center gap-2">
+                                <img src="assets/photoshop.png" alt="Ps" class="tool-icon" loading="lazy"> <span class="text-sm text-gray-200">Photoshop</span>
+                            </div>
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all cursor-default flex items-center gap-2">
+                                <img src="assets/canvalogo.png" alt="Cn" class="tool-icon" loading="lazy"> <span class="text-sm text-gray-200">Canva</span>
+                            </div>
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all cursor-default flex items-center gap-2">
+                                <img src="assets/capcut.png" alt="Cc" class="tool-icon" loading="lazy"> <span class="text-sm text-gray-200">CapCut</span>
+                            </div>
+                            <div class="reveal-item pending-reveal group px-5 py-2.5 bg-white/5 border border-white/10 rounded-lg hover:bg-cyan-500/20 hover:border-cyan-500/50 transition-all cursor-default flex items-center gap-2">
+                                <i class="fa-solid fa-chart-pie text-purple-400"></i> <span class="text-sm text-gray-200">Social Analytics</span>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- 4. Analytics/Results Simulation Section -->
-        <section id="results" class="py-20 fade-in">
-            <div class="text-center mb-12">
-                <h3 class="text-4xl font-bold mb-4">Driving Measurable Results</h3>
-                <p class="text-gray-400 text-lg">My strategy is rooted in data and optimization for sustained growth.</p>
+        <!-- EXPERIENCE SECTION -->
+        <section id="experience" class="page-section px-6">
+            <div class="max-w-4xl mx-auto py-10">
+                <h2 class="text-4xl md:text-6xl font-bold text-center mb-20 text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-gray-500 reveal-item pending-reveal">Professional Odyssey</h2>
+                <div class="space-y-16 relative">
+                    <div class="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-gray-800 to-transparent hidden md:block"></div>
+                    
+                    <!-- Job 1 -->
+                    <div class="reveal-item pending-reveal relative flex flex-col md:flex-row gap-8 items-center md:justify-between group" style="transition-delay: 0.1s;">
+                        <div class="md:w-[45%] md:text-right order-2 md:order-1 glass p-8 rounded-2xl hover:bg-white/5 border-l-4 border-blue-600 md:border-l-0 md:border-r-4">
+                            <h3 class="text-2xl font-bold text-white group-hover:text-blue-500 transition-colors">Social Media Marketer</h3>
+                            <p class="text-blue-500 font-medium text-sm mb-4 uppercase tracking-wider">Stories by Akshay | UAE & Kerala</p>
+                            <p class="text-gray-400 text-sm leading-relaxed">Audited daily trends, defined content pillars, and planned batch shoots.</p>
+                        </div>
+                        <div class="absolute left-0 md:left-1/2 w-4 h-4 bg-black border-2 border-blue-600 rounded-full transform md:-translate-x-1/2 z-10 hidden md:block"></div>
+                        <div class="md:w-[45%] order-1 md:order-2">
+                            <span class="inline-block px-4 py-1 bg-blue-600/10 text-blue-300 border border-blue-600/20 rounded-full text-xs font-mono font-bold">July 2025 – Jan 2026</span>
+                        </div>
+                    </div>
+                    <!-- Job 2 -->
+                    <div class="reveal-item pending-reveal relative flex flex-col md:flex-row gap-8 items-center md:justify-between group" style="transition-delay: 0.2s;">
+                        <div class="md:w-[45%] md:text-right order-1">
+                            <span class="inline-block px-4 py-1 bg-purple-500/10 text-purple-300 border border-purple-500/20 rounded-full text-xs font-mono font-bold">Oct 2023 – June 2025</span>
+                        </div>
+                        <div class="absolute left-0 md:left-1/2 w-4 h-4 bg-black border-2 border-purple-500 rounded-full transform md:-translate-x-1/2 z-10 hidden md:block"></div>
+                        <div class="md:w-[45%] order-2 glass p-8 rounded-2xl hover:bg-white/5 border-l-4 border-purple-500">
+                            <h3 class="text-2xl font-bold text-white group-hover:text-purple-400 transition-colors">Social Media Manager</h3>
+                            <p class="text-purple-400 font-medium text-sm mb-4 uppercase tracking-wider">Sanjose Consultancy | Vaikom</p>
+                            <p class="text-gray-400 text-sm leading-relaxed">Managed multi-platform presence and fostered brand loyalty.</p>
+                        </div>
+                    </div>
+                    <!-- Job 3 -->
+                    <div class="reveal-item pending-reveal relative flex flex-col md:flex-row gap-8 items-center md:justify-between group" style="transition-delay: 0.3s;">
+                        <div class="md:w-[45%] md:text-right order-2 md:order-1 glass p-8 rounded-2xl hover:bg-white/5 border-l-4 border-cyan-500 md:border-l-0 md:border-r-4">
+                            <h3 class="text-2xl font-bold text-white group-hover:text-cyan-400 transition-colors">Social Media Manager</h3>
+                            <p class="text-cyan-400 font-medium text-sm mb-4 uppercase tracking-wider">F2.0 Studios | Alappuzha</p>
+                            <p class="text-gray-400 text-sm leading-relaxed">Executed targeted ad campaigns for a photography studio, optimizing spend via A/B testing.</p>
+                        </div>
+                        <div class="absolute left-0 md:left-1/2 w-4 h-4 bg-black border-2 border-cyan-500 rounded-full transform md:-translate-x-1/2 z-10 hidden md:block"></div>
+                        <div class="md:w-[45%] order-1 md:order-2">
+                            <span class="inline-block px-4 py-1 bg-cyan-500/10 text-cyan-300 border border-cyan-500/20 rounded-full text-xs font-mono font-bold">Nov 2022 – Sep 2023</span>
+                        </div>
+                    </div>
+                    <!-- Job 4 -->
+                    <div class="reveal-item pending-reveal relative flex flex-col md:flex-row gap-8 items-center md:justify-between group" style="transition-delay: 0.4s;">
+                        <div class="md:w-[45%] md:text-right order-1">
+                            <span class="inline-block px-4 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-full text-xs font-mono font-bold">July 2022 – Oct 2022</span>
+                        </div>
+                        <div class="absolute left-0 md:left-1/2 w-4 h-4 bg-black border-2 border-emerald-500 rounded-full transform md:-translate-x-1/2 z-10 hidden md:block"></div>
+                        <div class="md:w-[45%] order-2 glass p-8 rounded-2xl hover:bg-white/5 border-l-4 border-emerald-500">
+                            <h3 class="text-2xl font-bold text-white group-hover:text-emerald-400 transition-colors">Social Media Manager</h3>
+                            <p class="text-emerald-400 font-medium text-sm mb-4 uppercase tracking-wider">Sensations Solutions | Kochi</p>
+                            <p class="text-gray-400 text-sm leading-relaxed">Managed 8+ clients simultaneously, designing custom ad strategies.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
+        </section>
 
-            <div class="grid md:grid-cols-3 gap-8 text-center">
-                <!-- Metric 1 -->
-                <div class="p-8 bg-gray-800 rounded-xl shadow-xl">
-                    <p class="text-5xl font-extrabold text-[#06b6d4] mb-2" data-target="68">0%</p>
-                    <p class="text-lg font-semibold text-gray-200">Avg. Follower Growth (Annual)</p>
-                    <div class="metric-bar mt-4"><div class="metric-fill" data-width="85%" style="width: 0%;"></div></div>
+        <!-- PORTFOLIO SECTION -->
+        <section id="work" class="page-section px-6 flex items-start pt-24">
+            <div class="max-w-7xl mx-auto w-full text-center pb-20">
+                
+                <!-- Measurable Results -->
+                <div class="mb-32">
+                    <h2 class="text-3xl md:text-5xl font-bold text-center mb-16 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-white to-purple-400 reveal-item pending-reveal">Driving Measurable Results</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Stat 1 -->
+                        <div class="glass p-8 rounded-3xl flex flex-col items-center justify-center relative overflow-hidden group hover:bg-white/5 transition-colors reveal-item pending-reveal">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/20 blur-[50px] rounded-full"></div>
+                            <div class="relative w-48 h-48 mb-6">
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="96" cy="96" r="80" stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="transparent" />
+                                    <circle class="stat-progress transition-all duration-[2000ms] ease-out" cx="96" cy="96" r="80" stroke="#3b82f6" stroke-width="12" fill="transparent" stroke-dasharray="502" stroke-dashoffset="502" stroke-linecap="round" data-percent="68" />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="text-5xl font-bold text-white stat-counter" data-target="68">0</span>
+                                    <span class="text-2xl text-blue-400 font-bold">%</span>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Avg Follower Growth</h3>
+                        </div>
+                        <!-- Stat 2 -->
+                        <div class="glass p-8 rounded-3xl flex flex-col items-center justify-center relative overflow-hidden group hover:bg-white/5 transition-colors reveal-item pending-reveal" style="transition-delay: 0.2s;">
+                            <div class="absolute bottom-0 left-0 w-32 h-32 bg-purple-600/20 blur-[50px] rounded-full"></div>
+                            <div class="relative w-48 h-48 mb-6">
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="96" cy="96" r="80" stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="transparent" />
+                                    <circle class="stat-progress transition-all duration-[2000ms] ease-out" cx="96" cy="96" r="80" stroke="#a855f7" stroke-width="12" fill="transparent" stroke-dasharray="502" stroke-dashoffset="502" stroke-linecap="round" data-percent="75" />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="text-5xl font-bold text-white stat-counter" data-target="75">0</span>
+                                    <span class="text-2xl text-purple-400 font-bold">%</span>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Increased Client Leads</h3>
+                        </div>
+                        <!-- Stat 3 -->
+                        <div class="glass p-8 rounded-3xl flex flex-col items-center justify-center relative overflow-hidden group hover:bg-white/5 transition-colors reveal-item pending-reveal" style="transition-delay: 0.4s;">
+                            <div class="absolute top-0 left-0 w-32 h-32 bg-cyan-600/20 blur-[50px] rounded-full"></div>
+                            <div class="relative w-48 h-48 mb-6">
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="96" cy="96" r="80" stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="transparent" />
+                                    <circle class="stat-progress transition-all duration-[2000ms] ease-out" cx="96" cy="96" r="80" stroke="#06b6d4" stroke-width="12" fill="transparent" stroke-dasharray="502" stroke-dashoffset="502" stroke-linecap="round" data-percent="51" />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="text-5xl font-bold text-white stat-counter" data-target="51">0</span>
+                                    <span class="text-2xl text-cyan-400 font-bold">%</span>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">CPA Reduction</h3>
+                        </div>
+                        <!-- Stat 4 -->
+                        <div class="glass p-8 rounded-3xl flex flex-col items-center justify-center relative overflow-hidden group hover:bg-white/5 transition-colors reveal-item pending-reveal">
+                            <div class="relative w-48 h-48 mb-6">
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="96" cy="96" r="80" stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="transparent" />
+                                    <circle class="stat-progress transition-all duration-[2000ms] ease-out" cx="96" cy="96" r="80" stroke="#db2777" stroke-width="12" fill="transparent" stroke-dasharray="502" stroke-dashoffset="502" stroke-linecap="round" data-percent="92" />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="text-5xl font-bold text-white stat-counter" data-target="92">0</span>
+                                    <span class="text-2xl text-pink-500 font-bold">%</span>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Engagement Rate</h3>
+                        </div>
+                        <!-- Stat 5 -->
+                        <div class="glass p-8 rounded-3xl flex flex-col items-center justify-center relative overflow-hidden group hover:bg-white/5 transition-colors reveal-item pending-reveal" style="transition-delay: 0.2s;">
+                            <div class="relative w-48 h-48 mb-6">
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="96" cy="96" r="80" stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="transparent" />
+                                    <circle class="stat-progress transition-all duration-[2000ms] ease-out" cx="96" cy="96" r="80" stroke="#10b981" stroke-width="12" fill="transparent" stroke-dasharray="502" stroke-dashoffset="502" stroke-linecap="round" data-percent="45" />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="text-5xl font-bold text-white stat-counter" data-target="45">0</span>
+                                    <span class="text-2xl text-emerald-500 font-bold">%</span>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Conversion Rate</h3>
+                        </div>
+                        <!-- Stat 6 -->
+                        <div class="glass p-8 rounded-3xl flex flex-col items-center justify-center relative overflow-hidden group hover:bg-white/5 transition-colors reveal-item pending-reveal" style="transition-delay: 0.4s;">
+                            <div class="relative w-48 h-48 mb-6">
+                                <svg class="w-full h-full transform -rotate-90">
+                                    <circle cx="96" cy="96" r="80" stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="transparent" />
+                                    <circle class="stat-progress transition-all duration-[2000ms] ease-out" cx="96" cy="96" r="80" stroke="#f59e0b" stroke-width="12" fill="transparent" stroke-dasharray="502" stroke-dashoffset="502" stroke-linecap="round" data-percent="88" />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="text-5xl font-bold text-white stat-counter" data-target="88">0</span>
+                                    <span class="text-2xl text-amber-500 font-bold">%</span>
+                                </div>
+                            </div>
+                            <h3 class="text-xl font-bold text-white">Brand Visibility</h3>
+                        </div>
+                    </div>
                 </div>
-                <!-- Metric 2 -->
-                <div class="p-8 bg-gray-800 rounded-xl shadow-xl">
-                    <p class="text-5xl font-extrabold text-[#06b6d4] mb-2" data-target="56">0%</p>
-                    <p class="text-lg font-semibold text-gray-200">Increased Client Leads via SM</p>
-                    <div class="metric-bar mt-4"><div class="metric-fill" data-width="95%" style="width: 0%;"></div></div>
+
+                <h2 class="text-4xl md:text-6xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-gray-100 to-gray-500 reveal-item pending-reveal">Featured Works</h2>
+                <p class="text-gray-400 mb-16 max-w-2xl mx-auto reveal-item pending-reveal">A curation of high-impact visuals and viral content strategies.</p>
+                
+                <!-- Posters -->
+                <div class="text-left mb-16 reveal-item pending-reveal" style="transition-delay: 0.2s;">
+                    <h3 class="text-2xl font-bold inline-block pl-4 border-l-4 border-blue-600 mb-6">Campaign Posters</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6" id="poster-grid">
+                        <!-- JS injected here -->
+                    </div>
                 </div>
-                <!-- Metric 3 -->
-                <div class="p-8 bg-gray-800 rounded-xl shadow-xl">
-                    <p class="text-5xl font-extrabold text-[#06b6d4] mb-2" data-target="49">0%</p>
-                    <p class="text-lg font-semibold text-gray-200">Avg. Cost-Per-Acquisition Reduction</p>
-                    <div class="metric-bar mt-4"><div class="metric-fill" data-width="75%" style="width: 0%;"></div></div>
+
+                <!-- Reels -->
+                <div class="text-left reveal-item pending-reveal" style="transition-delay: 0.3s;">
+                    <h3 class="text-2xl font-bold inline-block pl-4 border-l-4 border-cyan-500 mb-6">Viral Reels</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6" id="reel-grid">
+                        <!-- JS injected here -->
+                    </div>
                 </div>
             </div>
-            <div class="mt-12 p-6 bg-[#0d1117] border border-gray-700 rounded-xl text-center">
-                <p class="text-gray-400 italic">"Optimized ad spend through rigorous A/B testing, precise audience targeting, and strategic budget allocation."</p>
+        </section>
+
+        <!-- CONTACT SECTION -->
+        <section id="contact" class="page-section px-6 flex items-center">
+            <div class="max-w-2xl mx-auto glass p-10 md:p-16 rounded-[3rem] text-center relative overflow-hidden reveal-item pending-reveal">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Let's Create Something Viral</h2>
+                <div class="flex flex-col gap-4 relative z-10">
+                    <a href="tel:+918138098188" class="group flex items-center justify-between px-6 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white hover:text-black transition-all duration-300">
+                        <div class="flex items-center gap-4"><i class="fa-solid fa-phone"></i><span class="font-bold text-lg">+91 8138098188</span></div>
+                    </a>
+                    <a href="mailto:imabhijitha@gmail.com" class="group flex items-center justify-between px-6 py-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white hover:text-black transition-all duration-300">
+                        <div class="flex items-center gap-4"><i class="fa-solid fa-envelope"></i><span class="font-bold text-lg">imabhijitha@gmail.com</span></div>
+                    </a>
+                    <a href="https://www.linkedin.com/in/abhijithsocial" class="group flex items-center justify-between px-6 py-4 bg-[#0077b5]/20 border border-[#0077b5]/30 rounded-2xl hover:bg-[#0077b5] hover:text-white transition-all duration-300">
+                        <div class="flex items-center gap-4"><i class="fa-brands fa-linkedin"></i><span class="font-bold text-lg">LinkedIn Profile</span></div>
+                    </a>
+                </div>
+                <footer class="mt-12 text-sm text-gray-600"><p>© 2026 Abhijith A K. Made in Kerala.</p></footer>
             </div>
         </section>
 
     </main>
 
-    <!-- Footer & Contact -->
-    <footer id="contact" class="bg-gray-900 mt-12 py-12 border-t border-gray-800 fade-in">
-        <div class="max-w-7xl mx-auto container-padding flex flex-col md:flex-row justify-between items-center">
-            <div class="text-center md:text-left mb-6 md:mb-0">
-                <h4 class="text-2xl font-bold text-white">Let's Build Your Online Presence.</h4>
-                <p class="text-gray-400">Ready to leverage data-driven social campaigns?</p>
-            </div>
-            <div class="space-y-4 md:space-y-0 md:space-x-8 text-center md:text-right">
-                <p class="text-lg">
-                    <span class="font-semibold text-[#06b6d4]">Email:</span> 
-                    <a href="mailto:imabhijitha@gmail.com" class="hover:text-[#06b6d4] transition duration-300">imabhijitha@gmail.com</a>
-                </p>
-                <p class="text-lg">
-                    <span class="font-semibold text-[#06b6d4]">Phone:</span> 
-                    <a href="tel:+918138098188" class="hover:text-[#06b6d4] transition duration-300">+91 81380 98188</a>
-                </p>
-                <a href="https://www.linkedin.com/in/abhijith-asokan-4165481a7/" target="_blank" class="text-gray-400 hover:text-[#06b6d4] transition duration-300 inline-block mt-2">
-                    <!-- LinkedIn Icon (Simple SVG) -->
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.366-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
-                </a>
-            </div>
-        </div>
-    </footer>
-
-    <!-- JavaScript for Interactions and Animations -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Setup Intersection Observer for Fade-In Animation
-            const sections = document.querySelectorAll('.fade-in');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                        observer.unobserve(entry.target); // Stop observing once visible
-                    }
-                });
-            }, {
-                threshold: 0.1 // Trigger when 10% of the element is visible
-            });
-
-            sections.forEach(section => {
-                observer.observe(section);
-            });
-
-            // 2. Metric Bar and Counter Animation
-            const animateMetrics = () => {
-                const metricElements = document.querySelectorAll('#results .metric-fill');
-                metricElements.forEach(bar => {
-                    const width = bar.getAttribute('data-width');
-                    bar.style.width = width;
-                });
-
-                const counterElements = document.querySelectorAll('#results [data-target]');
-                counterElements.forEach(counter => {
-                    const target = parseInt(counter.getAttribute('data-target'));
-                    let current = 0;
-                    const increment = target / 100; // Step size
-
-                    const updateCounter = () => {
-                        if (current < target) {
-                            current += increment;
-                            // Ensure the counter doesn't overshoot the target
-                            counter.textContent = Math.min(Math.ceil(current), target) + '%';
-                            requestAnimationFrame(updateCounter);
-                        } else {
-                            counter.textContent = target + '%';
-                        }
-                    };
-                    updateCounter();
-                });
-            };
-
-            // Observe the Results section to trigger the animations
-            const resultsObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        animateMetrics();
-                        resultsObserver.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.5 }); // Trigger when half of the results section is visible
-
-            const resultsSection = document.getElementById('results');
-            if (resultsSection) {
-                resultsObserver.observe(resultsSection);
-            }
-        });
+    <!-- SHADERS -->
+    <script id="vertexShader" type="x-shader/x-vertex">
+        void main() { gl_Position = vec4( position, 1.0 ); }
+    </script>
+    <script id="fragmentShader" type="x-shader/x-fragment">
+        uniform vec2 u_resolution; uniform float u_time; uniform vec2 u_mouse;
+        vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+        float snoise(vec2 v){
+            const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+            vec2 i  = floor(v + dot(v, C.yy) ); vec2 x0 = v - i + dot(i, C.xx);
+            vec2 i1; i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+            vec4 x12 = x0.xyxy + C.xxzz; x12.xy -= i1; i = mod(i, 289.0);
+            vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 )) + i.x + vec3(0.0, i1.x, 1.0 ));
+            vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+            m = m*m ; m = m*m ;
+            vec3 x = 2.0 * fract(p * C.www) - 1.0; vec3 h = abs(x) - 0.5;
+            vec3 ox = floor(x + 0.5); vec3 a0 = x - ox;
+            m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+            vec3 g; g.x  = a0.x  * x0.x  + h.x  * x0.y; g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+            return 130.0 * dot(m, g);
+        }
+        float getHeight(vec2 st, float t) {
+            vec2 q = vec2(0.); q.x = snoise(st + vec2(0.0, t*0.5)); q.y = snoise(st + vec2(1.0, t*0.3));
+            vec2 r = vec2(0.); r.x = snoise(st + 1.0*q + vec2(1.7, 9.2) + 0.15*t); r.y = snoise(st + 1.0*q + vec2(8.3, 2.8) + 0.126*t);
+            return snoise(st + r);
+        }
+        void main() {
+            vec2 st = gl_FragCoord.xy / u_resolution.xy; float aspect = u_resolution.x / u_resolution.y; st.x *= aspect; 
+            vec2 mouse = u_mouse / u_resolution; mouse.x *= aspect; 
+            vec2 toMouse = st - mouse; float dist = length(toMouse);
+            float pullStrength = smoothstep(0.3, 0.0, dist); vec2 push = normalize(toMouse) * pullStrength * 0.015; st -= push;
+            float t = u_time * 0.12; 
+            float eps = 0.002; float h = getHeight(st, t);
+            float hx = getHeight(st + vec2(eps, 0.0), t); float hy = getHeight(st + vec2(0.0, eps), t); 
+            vec3 normal = normalize(vec3(h - hx, h - hy, eps * 12.0)); 
+            vec3 lightPos = vec3(1.0, 1.0, 1.5); vec3 lightDir = normalize(lightPos); vec3 viewDir = vec3(0.0, 0.0, 1.0); 
+            vec3 ambient = vec3(0.02, 0.02, 0.03); 
+            float diff = max(dot(normal, lightDir), 0.0); vec3 diffuse = diff * vec3(0.05, 0.05, 0.06); 
+            vec3 halfDir = normalize(lightDir + viewDir); float spec = pow(max(dot(normal, halfDir), 0.0), 40.0); vec3 specular = spec * vec3(0.5, 0.55, 0.65); 
+            vec3 finalColor = ambient + diffuse + specular;
+            float vig = 1.0 - distance(gl_FragCoord.xy / u_resolution.xy, vec2(0.5)); finalColor *= smoothstep(0.0, 1.8, vig);
+            gl_FragColor = vec4(finalColor, 1.0);
+        }
     </script>
 
+    <script>
+        // Three.js Variables
+        let container, camera, scene, renderer, uniforms;
+
+        // --- SCROLL ANIMATIONS ---
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 }; 
+        const scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.remove('pending-reveal');
+                    
+                    // Chart Animations
+                    const charts = entry.target.querySelectorAll('.stat-progress');
+                    if(charts.length > 0) {
+                        charts.forEach(chart => {
+                            const percent = chart.getAttribute('data-percent');
+                            const circumference = 502;
+                            const offset = circumference - (percent / 100) * circumference;
+                            chart.style.transition = 'stroke-dashoffset 2s cubic-bezier(0.22, 1, 0.36, 1)';
+                            setTimeout(() => { chart.style.strokeDashoffset = offset; }, 50);
+                        });
+                        const counters = entry.target.querySelectorAll('.stat-counter');
+                        counters.forEach(counter => {
+                            const target = +counter.getAttribute('data-target');
+                            if(counter.innerText != target) {
+                                const duration = 2000;
+                                const increment = target / (duration / 16);
+                                let current = 0;
+                                const updateCounter = () => {
+                                    current += increment;
+                                    if(current < target) {
+                                        counter.innerText = Math.ceil(current);
+                                        requestAnimationFrame(updateCounter);
+                                    } else {
+                                        counter.innerText = target;
+                                    }
+                                };
+                                updateCounter();
+                            }
+                        });
+                    }
+                } else {
+                    const charts = entry.target.querySelectorAll('.stat-progress');
+                    if(charts.length > 0) {
+                        charts.forEach(chart => {
+                            chart.style.transition = 'none'; 
+                            chart.style.strokeDashoffset = '502';
+                        });
+                        const counters = entry.target.querySelectorAll('.stat-counter');
+                        counters.forEach(counter => { counter.innerText = '0'; });
+                    }
+                }
+            });
+        }, observerOptions);
+
+        function observeElements() {
+            setTimeout(() => {
+                document.querySelectorAll('.reveal-item').forEach(el => scrollObserver.observe(el));
+            }, 50);
+        }
+
+        // --- NAVIGATION PILL LOGIC (FIXED) ---
+        function movePill(target) {
+            const pill = document.getElementById('nav-pill');
+            if (target && pill) {
+                // Only move if element is actually visible/has width
+                if (target.offsetWidth > 0) {
+                    pill.style.opacity = '1';
+                    pill.style.width = `${target.offsetWidth}px`;
+                    pill.style.left = `${target.offsetLeft}px`;
+                }
+            }
+        }
+
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page-section').forEach(page => page.classList.remove('active'));
+            setTimeout(() => {
+                const target = document.getElementById(pageId);
+                if (target) {
+                    target.classList.add('active');
+                    target.querySelectorAll('.reveal-item').forEach(el => el.classList.add('pending-reveal'));
+                    observeElements();
+                    setTimeout(() => {
+                        target.querySelectorAll('.pending-reveal').forEach(el => el.classList.remove('pending-reveal'));
+                    }, 1000);
+                }
+            }, 50);
+            
+            // Remove active class from all links
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active-nav'));
+            
+            // Add to new link and move pill
+            const activeLink = document.getElementById(`nav-${pageId}`);
+            if (activeLink) {
+                activeLink.classList.add('active-nav');
+                movePill(activeLink);
+            }
+        }
+
+        function toggleMobileMenu() {
+            document.getElementById('mobile-menu').classList.toggle('translate-x-full');
+        }
+
+        // --- TESTIMONIALS ---
+        let currentTestimonial = 0;
+        const totalTestimonials = 4;
+        function setTestimonial(index) {
+            currentTestimonial = index;
+            const slides = document.querySelectorAll('.testimonial-slide');
+            const dots = document.querySelectorAll('.testimonial-dot');
+            slides.forEach((slide, i) => {
+                if (i === index) {
+                    slide.classList.add('active-slide');
+                    slide.style.opacity = '1';
+                    slide.style.transform = 'translateX(0)';
+                } else {
+                    slide.classList.remove('active-slide');
+                    slide.style.opacity = '0';
+                    slide.style.transform = 'translateX(20px)';
+                }
+            });
+            dots.forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.add('bg-white');
+                    dot.classList.remove('bg-white/20');
+                } else {
+                    dot.classList.remove('bg-white');
+                    dot.classList.add('bg-white/20');
+                }
+            });
+        }
+        setInterval(() => {
+            const nextIndex = (currentTestimonial + 1) % totalTestimonials;
+            if(document.getElementById('home').classList.contains('active')) {
+                setTestimonial(nextIndex);
+            }
+        }, 5000);
+
+        // --- PORTFOLIO DATA (MANUAL) ---
+        // Edit this list to add your files one by one.
+        const portfolioItems = [
+            
+            // --- POSTERS ---
+            // Copy this block for every new image you want to add
+            { 
+                type: 'poster', 
+                title: 'Campaign Launch',           // Title shown on hover
+                image: 'assets/poster1.jpeg',        // Your file in assets folder
+                link: ''                            // Optional: Paste a URL here if you want it to open a link (e.g., Instagram)
+            },
+            { 
+                type: 'poster', 
+                title: 'Brand Identity', 
+                image: 'assets/poster2.jpeg'
+            },
+            { 
+                type: 'poster', 
+                title: 'Social Post', 
+                image: 'assets/poster3.jpeg'
+            },
+            // ... Add more posters below ...
+             { type: 'poster', title: 'Poster 4', image: 'assets/poster4.jpeg' },
+             { type: 'poster', title: 'Poster 5', image: 'assets/poster5.jpeg' },
+             { type: 'poster', title: 'Poster 6', image: 'assets/poster6.jpeg' },
+             { type: 'poster', title: 'Poster 7', image: 'assets/poster7.jpeg' },
+             { type: 'poster', title: 'Poster 8', image: 'assets/poster8.jpeg' },
+             { type: 'poster', title: 'Poster 9', image: 'assets/poster9.jpeg' },
+             { type: 'poster', title: 'Poster 10', image: 'assets/poster10.jpeg' },
+             { type: 'poster', title: 'Poster 11', image: 'assets/poster11.jpeg' },
+             { type: 'poster', title: 'Poster 12', image: 'assets/poster12.jpeg' },
+             { type: 'poster', title: 'Poster 13', image: 'assets/poster13.jpeg' },
+             { type: 'poster', title: 'Poster 14', image: 'assets/poster14.jpeg' },
+             { type: 'poster', title: 'Poster 15', image: 'assets/poster15.jpeg' },
+             { type: 'poster', title: 'Poster 16', image: 'assets/poster16.jpeg' },
+             { type: 'poster', title: 'Poster 17', image: 'assets/poster17.jpeg' },
+             { type: 'poster', title: 'Poster 18', image: 'assets/poster18.jpeg' },
+             { type: 'poster', title: 'Poster 19', image: 'assets/poster19.jpeg' },
+             { type: 'poster', title: 'Poster 20', image: 'assets/poster20.jpeg' },
+             { type: 'poster', title: 'Poster 21', image: 'assets/poster21.jpeg' },
+             { type: 'poster', title: 'Poster 22', image: 'assets/poster22.jpeg' },
+             { type: 'poster', title: 'Poster 23', image: 'assets/poster23.jpeg' },
+
+            // --- REELS ---
+            // Copy this block for every new video
+            { 
+                type: 'reel', 
+                title: 'Viral Trend Video', 
+                image: 'assets/reel1.jpg',          // The cover image/thumbnail
+                video: 'assets/reel1.mp4'           // The actual video file
+            },
+            { 
+                type: 'reel', 
+                title: 'Product Showcase', 
+                image: 'assets/reel2.jpg',
+                video: 'assets/reel2.mp4'
+            },
+            { 
+                type: 'reel', 
+                title: 'Behind Scenes', 
+                image: 'assets/reel3.jpg',
+                video: 'assets/reel3.mp4'
+            }
+        ];
+
+        let currentModalIndex = 0;
+
+        function initPortfolio() {
+            // Check if containers exist
+            const posterGrid = document.getElementById('poster-grid');
+            const reelGrid = document.getElementById('reel-grid');
+            
+            if(posterGrid) posterGrid.innerHTML = '';
+            if(reelGrid) reelGrid.innerHTML = '';
+
+            portfolioItems.forEach((item, index) => {
+                const isReel = item.type === 'reel';
+                const delay = 0.05 * (index % 10);
+                
+                // If item has a link property, use <a> tag, otherwise use <div> with onclick
+                const tag = item.link ? 'a' : 'div';
+                const attrs = item.link 
+                    ? `href="${item.link}" target="_blank"` 
+                    : `onclick="openModal(${index})"`;
+                
+                // Icons logic (local files)
+                const iconHtml = isReel 
+                    ? `<div class="flex items-center justify-center gap-1 mt-2 border-t border-gray-600 pt-2"><img src="assets/capcut.png" class="tool-icon" alt="Cc" loading="lazy"></div><span class="text-[9px] text-gray-400 mt-1">Edited with CapCut</span>`
+                    : `<div class="flex items-center justify-center gap-2 mt-2 border-t border-gray-600 pt-2"><img src="assets/photoshop.png" class="tool-icon" alt="Ps" loading="lazy"><img src="assets/canvalogo.png" class="tool-icon" alt="Cn" loading="lazy"></div><span class="text-[9px] text-gray-400 mt-1">Photoshop & Canva</span>`;
+                
+                const mediaTag = isReel 
+                    ? `<video src="${item.video}#t=1.5" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100" muted preload="metadata"></video>`
+                    : `<img src="${item.image}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100" loading="lazy" decoding="async">`;
+
+                const cardHtml = `
+                <${tag} ${attrs} class="cursor-pointer reveal-item pending-reveal group relative block rounded-2xl overflow-hidden glass shadow-lg aspect-[${isReel ? '9/16' : '3/4'}]" style="transition-delay: ${delay}s;">
+                    ${mediaTag}
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white p-4 text-center">
+                        <i class="${isReel ? 'fa-solid fa-play' : 'fa-regular fa-image'} text-2xl mb-2 ${isReel ? 'text-cyan-500' : 'text-blue-500'}"></i>
+                        <span class="font-mono text-[10px] tracking-widest mb-1">${item.title}</span>
+                        ${item.link ? '<span class="text-[9px] text-blue-300 mt-1"><i class="fa-solid fa-link mr-1"></i>Open Link</span>' : ''}
+                        ${iconHtml}
+                    </div>
+                </${tag}>`;
+
+                if(isReel) {
+                    if(reelGrid) reelGrid.innerHTML += cardHtml;
+                } else {
+                    if(posterGrid) posterGrid.innerHTML += cardHtml;
+                }
+            });
+        }
+
+        // Modal Functions
+        function openModal(index) {
+            currentModalIndex = index;
+            updateModalContent();
+            const modal = document.getElementById('portfolio-modal');
+            modal.classList.remove('hidden');
+            modal.querySelector('.modal-bg').classList.add('modal-enter');
+            modal.querySelector('.modal-box').classList.add('modal-content-enter');
+            document.addEventListener('keydown', handleModalKeys);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('portfolio-modal');
+            const content = document.getElementById('modal-content-body');
+            const video = content.querySelector('video');
+            if(video) { video.pause(); video.currentTime = 0; }
+            modal.classList.add('hidden');
+            modal.querySelector('.modal-bg').classList.remove('modal-enter');
+            modal.querySelector('.modal-box').classList.remove('modal-content-enter');
+            document.removeEventListener('keydown', handleModalKeys);
+        }
+
+        function changeSlide(direction) {
+            currentModalIndex += direction;
+            if (currentModalIndex < 0) currentModalIndex = portfolioItems.length - 1;
+            if (currentModalIndex >= portfolioItems.length) currentModalIndex = 0;
+            const content = document.getElementById('modal-content-body');
+            const video = content.querySelector('video');
+            if(video) video.pause();
+            content.style.opacity = '0';
+            content.style.transform = `translateX(${direction * 10}px)`;
+            setTimeout(() => {
+                updateModalContent();
+                content.style.opacity = '1';
+                content.style.transform = 'translateX(0)';
+            }, 150);
+        }
+
+        function updateModalContent() {
+            const item = portfolioItems[currentModalIndex];
+            const content = document.getElementById('modal-content-body');
+            const counter = document.getElementById('modal-counter');
+            if(counter) counter.innerText = `${currentModalIndex + 1} / ${portfolioItems.length}`;
+
+            let html = '';
+            if(item.type === 'poster') {
+                html = `
+                    <div class="aspect-[3/4] bg-gray-900/80 rounded-lg flex flex-col items-center justify-center relative overflow-hidden">
+                        <img src="${item.image}" alt="${item.title}" class="absolute inset-0 w-full h-full object-cover">
+                        <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent">
+                            <h3 class="text-xl font-bold text-white">${item.title}</h3>
+                            <p class="text-gray-300 text-xs mt-1">High-Res Campaign Visual</p>
+                            ${item.link ? `<a href="${item.link}" target="_blank" class="inline-block mt-3 text-blue-400 text-xs font-bold uppercase tracking-wide border border-blue-400 px-3 py-1 rounded hover:bg-blue-400 hover:text-black transition-colors">Visit Link <i class="fa-solid fa-external-link-alt ml-1"></i></a>` : ''}
+                            <div class="flex items-center gap-3 mt-3">
+                                <img src="assets/photoshop.png" class="tool-icon w-6 h-6" alt="Ps">
+                                <img src="assets/canva.png" class="tool-icon w-6 h-6" alt="Cn">
+                                <span class="text-blue-400 text-xs font-bold tracking-wide uppercase">Photoshop & Canva</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html = `
+                    <div class="aspect-[9/16] bg-black rounded-lg flex flex-col items-center justify-center relative overflow-hidden shadow-2xl">
+                        <video controls autoplay loop playsinline class="w-full h-full object-cover" poster="${item.image}">
+                            <source src="${item.video}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="absolute top-4 left-4 z-10 pointer-events-none bg-black/60 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                             <h3 class="text-xs font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-film text-blue-400"></i> ${item.title}
+                             </h3>
+                        </div>
+                        <div class="absolute bottom-16 left-4 z-10 pointer-events-none flex items-center gap-2 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-white/5">
+                            <img src="assets/capcut.png" class="tool-icon w-5 h-5" alt="Cc">
+                            <span class="text-xs font-bold text-gray-200">Edited with CapCut</span>
+                        </div>
+                    </div>
+                `;
+            }
+            content.innerHTML = html;
+        }
+
+        function handleModalKeys(e) {
+            if(e.key === 'Escape') closeModal();
+            if(e.key === 'ArrowLeft') changeSlide(-1);
+            if(e.key === 'ArrowRight') changeSlide(1);
+        }
+
+        // Swipe
+        let touchStartX = 0; let touchEndX = 0;
+        const modalContainer = document.getElementById('modal-container');
+        if (modalContainer) {
+            modalContainer.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; });
+            modalContainer.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                if (touchEndX < touchStartX - 50) changeSlide(1);
+                if (touchEndX > touchStartX + 50) changeSlide(-1);
+            });
+        }
+
+        // INIT
+        window.addEventListener('load', () => {
+            observeElements();
+            initPortfolio(); // Initialize grid items
+            
+            const loader = document.getElementById('page-loader');
+            // Ensure loader fades out even if images fail
+            setTimeout(() => {
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(() => { loader.style.display = 'none'; }, 700); 
+                }
+            }, 1000);
+
+            // Initialize Nav Pill with slight delay for layout stability
+            setTimeout(() => {
+                const activeNav = document.querySelector('.active-nav');
+                if(activeNav) movePill(activeNav);
+            }, 200);
+
+            setTimeout(() => {
+               const homeItems = document.getElementById('home').querySelectorAll('.pending-reveal');
+               homeItems.forEach(el => el.classList.remove('pending-reveal'));
+            }, 100);
+            
+            init(); // Three.js
+        });
+
+        // Resize handler for pill
+        window.addEventListener('resize', () => {
+            const activeNav = document.querySelector('.active-nav');
+            const navContainer = document.querySelector('.nav-container');
+            // Only update if desktop nav is visible
+            if(activeNav && navContainer && getComputedStyle(navContainer).display !== 'none') {
+                movePill(activeNav);
+            }
+             onWindowResize(); // Update Three.js
+        });
+
+        function init() {
+            const vertexShaderEl = document.getElementById('vertexShader');
+            const fragmentShaderEl = document.getElementById('fragmentShader');
+
+            if (!vertexShaderEl || !fragmentShaderEl) {
+                console.error("Shaders not found");
+                return;
+            }
+
+            container = document.getElementById('canvas-container');
+            camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+            scene = new THREE.Scene();
+            const geometry = new THREE.PlaneGeometry(2, 2);
+            uniforms = { u_time: { value: 1.0 }, u_resolution: { value: new THREE.Vector2() }, u_mouse: { value: new THREE.Vector2() } };
+            const material = new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: vertexShaderEl.textContent, fragmentShader: fragmentShaderEl.textContent });
+            scene.add(new THREE.Mesh(geometry, material));
+            renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+            onWindowResize();
+            window.addEventListener('resize', onWindowResize, false);
+            document.addEventListener('mousemove', (e) => {
+                uniforms.u_mouse.value.x = e.clientX;
+                uniforms.u_mouse.value.y = window.innerHeight - e.clientY;
+            }, false);
+            
+            animate();
+        }
+        function onWindowResize() {
+            if (!renderer) return;
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            if (uniforms && uniforms.u_resolution && uniforms.u_resolution.value) {
+                uniforms.u_resolution.value.x = renderer.domElement.width;
+                uniforms.u_resolution.value.y = renderer.domElement.height;
+            }
+        }
+        function animate() {
+            requestAnimationFrame(animate);
+            if (uniforms) uniforms.u_time.value += 0.01;
+            if (renderer && scene && camera) renderer.render(scene, camera);
+        }
+    </script>
 </body>
 </html>
-
